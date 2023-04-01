@@ -22,11 +22,11 @@
     </properties>
 
     <modules>
-        <module>accounts-fetcher</module>
+        <module>account-synchronizer</module>
         <module>booking-service</module>
-        <module>linux-shell-executor</module>
-        <module>web-gui</module>
-        <module>working-session-controller</module>
+        <module>lab-controller</module>
+        <module>telegram-ui</module>
+        <module>notification-service</module>
     </modules>
 
 </project>
