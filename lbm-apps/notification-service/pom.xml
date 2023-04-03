@@ -5,13 +5,13 @@
 
     <parent>
         <groupId>ru.github.dankharlushin</groupId>
-        <artifactId>lab-booking-manager</artifactId>
+        <artifactId>lbm-apps</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <packaging>jar</packaging>
     <artifactId>notification-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <name>notification-service</name>
 

@@ -5,15 +5,15 @@
 
     <parent>
         <groupId>ru.github.dankharlushin</groupId>
-        <artifactId>lab-booking-manager</artifactId>
+        <artifactId>lbm-apps</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <packaging>jar</packaging>
-    <artifactId>account-synchronizer</artifactId>
+    <artifactId>telegram-ui</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
-    <name>account-synchronizer</name>
+    <name>telegram-ui</name>
 
     <properties>
         <java.version>17</java.version>

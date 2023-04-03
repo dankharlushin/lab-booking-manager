@@ -5,7 +5,7 @@
 
     <parent>
         <groupId>ru.github.dankharlushin</groupId>
-        <artifactId>lab-booking-manager</artifactId>
+        <artifactId>lbm-apps</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
