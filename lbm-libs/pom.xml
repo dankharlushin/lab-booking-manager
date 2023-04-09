@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>lbm-databse-lib</module>
+        <module>lbm-data-lib</module>
         <module>lbm-shell-lib</module>
     </modules>
 
