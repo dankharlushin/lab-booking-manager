@@ -63,7 +63,7 @@ public class CommandLineExecutorImpl implements CommandLineExecutor {
             process.waitFor();
             return process;
         } catch (final Exception e) {
-            throw new ExecutionException("Unable to execute command [" + command + commandArgs + "]", e);
+            throw new ExecutionException("Unable to execute command [" + command + " " + commandArgs + "]", e);
         }
     }
 }

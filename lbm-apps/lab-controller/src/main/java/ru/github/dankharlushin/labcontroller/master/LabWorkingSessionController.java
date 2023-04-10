@@ -2,10 +2,10 @@ package ru.github.dankharlushin.labcontroller.master;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.github.dankharlushin.lbmlib.data.service.BookingService;
+import ru.github.dankharlushin.lbmlib.data.service.LabUnitService;
 import ru.github.dankharlushin.lbmlib.shell.service.process.ShellProcessService;
 
 import java.util.*;
@@ -16,16 +16,15 @@ public class LabWorkingSessionController {
     private static final Logger logger = LoggerFactory.getLogger(LabWorkingSessionController.class);
 
     private final BookingService bookingService;
+    private final LabUnitService labUnitService;
     private final ShellProcessService shellProcessService;
 
-    private final List<String> labAppNames;
-
     public LabWorkingSessionController(final BookingService bookingService,
-                                       final ShellProcessService shellProcessService,
-                                       @Value("#{'${lab-controller.session.lab-app-names}'.split(',')}") final List<String> labAppNames) {
+                                       final LabUnitService labUnitService,
+                                       final ShellProcessService shellProcessService) {
         this.bookingService = bookingService;
+        this.labUnitService = labUnitService;
         this.shellProcessService = shellProcessService;
-        this.labAppNames = labAppNames;
     }
 
     @Scheduled(fixedDelayString = "${lab-controller.session.fixed-delay-ms}")
@@ -33,6 +32,7 @@ public class LabWorkingSessionController {
         logger.info("Start bookings verification");
         try {
             final Map<String, String> expectedAppToUser = bookingService.getCurrentBookingLabAppNameToUsername();
+            final List<String> labAppNames = labUnitService.findAllLabApps();
             for (final String labAppName : labAppNames) {
                 final String expectedLabUser = expectedAppToUser.get(labAppName);
                 final Map<String, List<Integer>> actualAppUsers = getCurrentUsersToPidsByLabAppName(labAppName);
