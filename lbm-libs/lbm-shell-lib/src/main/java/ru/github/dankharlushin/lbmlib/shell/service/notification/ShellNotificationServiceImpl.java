@@ -25,7 +25,11 @@ public class ShellNotificationServiceImpl implements ShellNotificationService {
                            final String messageBody,
                            final Urgency urgency) {
         try {
-            final int exitValue = executor.notifySend("sudo -u " + username, messageTitle, messageBody, Map.of());//fixme check!
+            final int exitValue = executor.notifySend(
+                    messageTitle,
+                    messageBody,
+                    Map.of(),
+                    Map.of("sudo", "", "-u", username));//fixme check!
             if (exitValue != 0) {
                 logger.error("Unable to notify user [{}], exit value [{}]", username, exitValue);
             }

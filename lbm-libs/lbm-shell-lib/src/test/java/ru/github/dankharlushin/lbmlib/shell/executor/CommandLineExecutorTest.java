@@ -21,12 +21,19 @@ class CommandLineExecutorTest {
     private CommandLineExecutor executor;
 
     @BeforeEach
-    void setUp() throws IOException, InterruptedException {
+    void setUp() {
         executor = new CommandLineExecutorImpl();
 
-        final ProcessBuilder sleep = new ProcessBuilder(TEST_PROCESS_COMMAND, TEST_PROCESS_COMMAND_ARG);
-        final Process sleepProcess = sleep.start();
-        sleepProcess.waitFor();
+        new Thread(() -> {
+            final ProcessBuilder sleep = new ProcessBuilder(TEST_PROCESS_COMMAND, TEST_PROCESS_COMMAND_ARG);
+            final Process sleepProcess;
+            try {
+                sleepProcess = sleep.start();
+                sleepProcess.waitFor();
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
     }
 
     @AfterEach
@@ -50,7 +57,7 @@ class CommandLineExecutorTest {
 
     @Test
     void testPgrepOption() throws ExecutionException, IOException {
-        final Map<String, Object> options = Map.of("-i", "", "-d", "!");
+        final Map<String, String> options = Map.of("-i", "", "-d", "!");
         final InputStream pgrep = executor.pgrep(TEST_PROCESS_COMMAND.toUpperCase(), options);
 
         assertThat(pgrep, notNullValue());
@@ -93,30 +100,28 @@ class CommandLineExecutorTest {
     void testKillExistent() throws ExecutionException, IOException {
         final InputStream pgrep = executor.pgrep(TEST_PROCESS_COMMAND, Map.of());
         final String pid = new String(pgrep.readAllBytes());
-        final int kill = executor.kill(Integer.parseInt(pid));
+        final int kill = executor.kill(Integer.parseInt(pid.replace("\n", "")));
 
         assertThat(kill, is(0));
     }
 
     @Test
-    void testKillNonExistent() throws ExecutionException, IOException {
-        final InputStream pgrep = executor.pgrep("nonExistent", Map.of());
-        final String pid = new String(pgrep.readAllBytes());
-        final int kill = executor.kill(Integer.parseInt(pid));
+    void testKillNonExistent() throws ExecutionException {
+        final int kill = executor.kill(777);
 
         assertThat(kill != 0, is(true));
     }
 
     @Test
     void testNotifySendSimple() throws ExecutionException {
-        final int notifySend = executor.notifySend( "","Summary", "Body", null);
+        final int notifySend = executor.notifySend("This is summary", "This is body", null, null);
 
         assertThat(notifySend, is(0));
     }
 
     @Test
     void testNotifySendOptions() throws ExecutionException {
-        final int notifySend = executor.notifySend("","Summary", "Body", Map.of("-u", "low"));
+        final int notifySend = executor.notifySend("This is summary", "This is body", Map.of("-u", "low"), null);
 
         assertThat(notifySend, is(0));
     }

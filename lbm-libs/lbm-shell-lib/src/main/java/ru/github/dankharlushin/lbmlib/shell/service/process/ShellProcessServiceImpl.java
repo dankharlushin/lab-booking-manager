@@ -38,9 +38,10 @@ public class ShellProcessServiceImpl implements ShellProcessService {
 
     @Override
     public Optional<String> getUserByPid(final int pid) {
-        try (final InputStream pgrep = executor.ps(Map.of("-p", pid, "-o", "user", "--no-header", ""))) {
+        try (final InputStream pgrep = executor.ps(Map.of("-p", String.valueOf(pid), "-o", "user", "--no-header", ""))) {
             final byte[] output = pgrep.readAllBytes();
-            return output.length > 0 ? Optional.of(new String(output)) : Optional.empty();//fixme check empty case
+            return output.length > 0 ? Optional.of(new String(output).replace(System.getProperty("line.separator"), ""))
+                    : Optional.empty();//fixme check empty case
         } catch (final ExecutionException | IOException e) {
             logger.error("Unable to get user by PID [{}]", pid, e);
             return Optional.empty();
