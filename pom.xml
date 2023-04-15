@@ -23,6 +23,7 @@
     <properties>
         <lombok.version>1.18.26</lombok.version>
         <testcontainers.version>1.17.6</testcontainers.version>
+        <telegram.version>6.3.0</telegram.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -30,6 +31,18 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.telegram</groupId>
+                <artifactId>telegrambotsextensions</artifactId>
+                <version>${telegram.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.telegram</groupId>
+                <artifactId>telegrambots</artifactId>
+                <version>${telegram.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
