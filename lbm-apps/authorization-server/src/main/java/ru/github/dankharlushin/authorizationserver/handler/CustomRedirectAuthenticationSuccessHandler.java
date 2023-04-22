@@ -23,22 +23,25 @@ public class CustomRedirectAuthenticationSuccessHandler implements Authenticatio
     private final JedisClient jedisClient;
     private final RedirectStrategy redirectStrategy;
     private final Duration authSessionTimeout;
-    private final String telegramSuccessRedirectUrl;
     private final String tgTokenSessionAttrName;
     private final String tgTokenParamName;
+    private final String tgCallbackParamName;
+    private final String tgCallbackSessionAttrName;
 
     public CustomRedirectAuthenticationSuccessHandler(final JedisClient jedisClient,
                                                       final RedirectStrategy redirectStrategy,
                                                       final Duration authSessionTimeout,
-                                                      final String telegramSuccessRedirectUrl,
                                                       final String tgTokenSessionAttrName,
-                                                      final String tgTokenParamName) {
+                                                      final String tgTokenParamName,
+                                                      final String tgCallbackParamName,
+                                                      final String tgCallbackSessionAttrName) {
         this.jedisClient = jedisClient;
         this.redirectStrategy = redirectStrategy;
         this.authSessionTimeout = authSessionTimeout;
-        this.telegramSuccessRedirectUrl = telegramSuccessRedirectUrl;
         this.tgTokenSessionAttrName = tgTokenSessionAttrName;
         this.tgTokenParamName = tgTokenParamName;
+        this.tgCallbackParamName = tgCallbackParamName;
+        this.tgCallbackSessionAttrName = tgCallbackSessionAttrName;
     }
 
     @Override
@@ -48,13 +51,16 @@ public class CustomRedirectAuthenticationSuccessHandler implements Authenticatio
         final HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute(tgTokenSessionAttrName) != null) {
             final String chatId = (String) session.getAttribute(tgTokenSessionAttrName);
+            final String callbackUrl = (String) session.getAttribute(tgCallbackSessionAttrName);
             final OsUserPrincipal user = (OsUserPrincipal) authentication.getPrincipal();
             jedisClient.setWithTtl(chatId, new TelegramAuthInfo(user.getUsername()), authSessionTimeout.getSeconds());
 
-            redirectStrategy.sendRedirect(request, response, telegramSuccessRedirectUrl);
+            redirectStrategy.sendRedirect(request, response, callbackUrl);
             session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
             session.removeAttribute(tgTokenSessionAttrName);
             session.removeAttribute(tgTokenParamName);
+            session.removeAttribute(tgCallbackSessionAttrName);
+            session.removeAttribute(tgCallbackParamName);
             logger.debug("Authentication success for session [{}]", session.getId());
         } else {
             logger.warn("Can't get telegram token param from session");

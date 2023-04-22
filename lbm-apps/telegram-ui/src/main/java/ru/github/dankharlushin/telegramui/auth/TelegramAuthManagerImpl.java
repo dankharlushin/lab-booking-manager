@@ -34,6 +34,8 @@ public class TelegramAuthManagerImpl implements TelegramAuthManager {
     private final SourceButtonService buttonService;
     private final String authServerBaseUrl;
     private final String tokenParamName;
+    private final String authCallbackUrl;
+    private final String authCallbackParamName;
     private final String publicKeyPath;
     private final String algorithmType;
 
@@ -42,6 +44,8 @@ public class TelegramAuthManagerImpl implements TelegramAuthManager {
                                    final SourceButtonService buttonService,
                                    @Value("${telegram-ui.auth.server.base-url}") final String authServerBaseUrl,
                                    @Value("${telegram-ui.auth.token.param-name}") final String tokenParamName,
+                                   @Value("${telegram-ui.auth.callback-url}") final String authCallbackUrl,
+                                   @Value("${telegram-ui.auth.callback-url.param-name}") final String authCallbackParamName,
                                    @Value("${telegram-ui.auth.public-key}") final String publicKeyPath,
                                    @Value("${telegram-ui.auth.algorithm-type}") final String algorithmType) {
         this.messageService = messageService;
@@ -49,6 +53,8 @@ public class TelegramAuthManagerImpl implements TelegramAuthManager {
         this.authServerBaseUrl = authServerBaseUrl;
         this.jedisClient = jedisClient;
         this.tokenParamName = tokenParamName;
+        this.authCallbackUrl = authCallbackUrl;
+        this.authCallbackParamName = authCallbackParamName;
         this.publicKeyPath = publicKeyPath;
         this.algorithmType = algorithmType;
     }
@@ -70,6 +76,24 @@ public class TelegramAuthManagerImpl implements TelegramAuthManager {
 
     private String generateAuthUrl(final long chatId) {
         try {
+            final String encodedChatId = encode(chatId);
+            final String encodedCallbackUrl = encode(authCallbackUrl);
+
+            final URIBuilder uriBuilder = new URIBuilder(authServerBaseUrl);
+            uriBuilder.addParameter(tokenParamName, encodedChatId);
+            uriBuilder.addParameter(authCallbackParamName, encodedCallbackUrl);
+            return uriBuilder.build().toString();
+        } catch (final Exception e) {
+            throw new IllegalStateException("Can't generate auth url", e);
+        }
+    }
+
+    private String encode(final long num) {
+        return encode(String.valueOf(num));
+    }
+
+    private String encode(final String str) {
+        try {
             File publicKeyFile = new File(publicKeyPath);
             byte[] publicKeyBytes = Files.readAllBytes(publicKeyFile.toPath());
             final KeyFactory keyFactory = KeyFactory.getInstance(algorithmType);
@@ -77,14 +101,10 @@ public class TelegramAuthManagerImpl implements TelegramAuthManager {
 
             Cipher encryptCipher = Cipher.getInstance(algorithmType);
             encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            final byte[] encodedBytesChatId = encryptCipher.doFinal(String.valueOf(chatId).getBytes());
-            final String encodedChatId = Base64.getEncoder().encodeToString(encodedBytesChatId);
-
-            final URIBuilder uriBuilder = new URIBuilder(authServerBaseUrl);
-            uriBuilder.addParameter(tokenParamName, encodedChatId);
-            return uriBuilder.build().toString();
+            final byte[] encodedBytesChatId = encryptCipher.doFinal(str.getBytes());
+            return Base64.getEncoder().encodeToString(encodedBytesChatId);
         } catch (final Exception e) {
-            throw new IllegalStateException("Can't generate auth url", e);
+            throw new IllegalStateException("Unable to encode string [" + str + "]", e);
         }
     }
 }

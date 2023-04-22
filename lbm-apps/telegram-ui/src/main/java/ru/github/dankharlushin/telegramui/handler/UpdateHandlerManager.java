@@ -64,7 +64,7 @@ public class UpdateHandlerManager {
         if (message.hasText()) {
             final Optional<CommandHandler> optHandler = commandHandlers
                     .stream()
-                    .filter(handler -> message.getText().contains(message.getText()))
+                    .filter(handler -> message.getText().contains(handler.getTextMessage()))
                     .findFirst();
             if (optHandler.isPresent()) {
                 logger.debug("Find text message handler for update with text [{}]", update.getMessage().getText());

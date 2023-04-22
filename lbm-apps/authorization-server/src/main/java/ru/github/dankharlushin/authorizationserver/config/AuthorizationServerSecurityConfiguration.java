@@ -39,34 +39,42 @@ public class AuthorizationServerSecurityConfiguration {
     private final UserRepository userRepository;
 
     private final Duration authSessionTimeout;
-    private final String telegramSuccessRedirectUrl;
     private final String tgTokenParamName;
     private final String tgTokenSessionAttrName;
+    private final String tgCallbackParamName;
+    private final String tgCallbackSessionAttrName;
     private final String tgPrivateKeyPath;
     private final String tgAlgorithmType;
+    private final String defaultCallbackUrl;
 
     public AuthorizationServerSecurityConfiguration(final JedisClient jedisClient,
                                                     final UserRepository userRepository,
                                                     @Value("${server.servlet.session.timeout}")
                                                     final Duration authSessionTimeout,
-                                                    @Value("${authorization-server.telegram-ui.redirect-url}")
-                                                    final String telegramSuccessRedirectUrl,
                                                     @Value("${authorization-server.telegram-ui.auth.token.session-attribute-name}")
                                                     final String tgTokenSessionAttrName,
                                                     @Value("${telegram-ui.auth.token.param-name}")
                                                     final String tgTokenParamName,
+                                                    @Value("${telegram-ui.auth.callback-url.param-name}")
+                                                    final String tgCallbackParamName,
+                                                    @Value("${authorization-server.telegram-ui.auth.callback-url.session-attribute-name}")
+                                                    final String tgCallbackSessionAttrName,
                                                     @Value("${telegram-ui.auth.private-key}")
                                                     final String tgPrivateKeyPath,
                                                     @Value("${telegram-ui.auth.algorithm-type}")
-                                                    final String tgAlgorithmType) {
+                                                    final String tgAlgorithmType,
+                                                    @Value("${authorization-server.default.redirect-url}")
+                                                    final String defaultCallbackUrl) {
         this.jedisClient = jedisClient;
         this.userRepository = userRepository;
         this.authSessionTimeout = authSessionTimeout;
-        this.telegramSuccessRedirectUrl = telegramSuccessRedirectUrl;
         this.tgTokenParamName = tgTokenParamName;
         this.tgTokenSessionAttrName = tgTokenSessionAttrName;
+        this.tgCallbackParamName = tgCallbackParamName;
+        this.tgCallbackSessionAttrName = tgCallbackSessionAttrName;
         this.tgPrivateKeyPath = tgPrivateKeyPath;
         this.tgAlgorithmType = tgAlgorithmType;
+        this.defaultCallbackUrl = defaultCallbackUrl;
     }
 
     @Bean
@@ -107,16 +115,17 @@ public class AuthorizationServerSecurityConfiguration {
         return new CustomRedirectAuthenticationSuccessHandler(jedisClient,
                 new DefaultRedirectStrategy(),
                 authSessionTimeout,
-                telegramSuccessRedirectUrl,
                 tgTokenSessionAttrName,
-                tgTokenParamName);
+                tgTokenParamName, tgCallbackParamName, tgCallbackSessionAttrName);
     }
 
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler() {
         return new CustomRedirectAuthenticationFailureHandler(new DefaultRedirectStrategy(),
                 tgTokenSessionAttrName,
-                tgTokenParamName);
+                tgTokenParamName,
+                tgCallbackParamName,
+                tgCallbackSessionAttrName);
     }
 
     @Bean
@@ -124,8 +133,11 @@ public class AuthorizationServerSecurityConfiguration {
         return new TelegramAuthFilter(jedisClient,
                 tgTokenParamName,
                 tgTokenSessionAttrName,
+                tgCallbackParamName,
+                tgCallbackSessionAttrName,
                 tgPrivateKeyPath,
-                tgAlgorithmType);
+                tgAlgorithmType,
+                defaultCallbackUrl);
     }
 
     @Bean
