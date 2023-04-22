@@ -1,5 +1,7 @@
 package ru.github.dankharlushin.bookingservice.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,8 @@ import java.util.List;
 @RequestMapping("/lab")
 public class LabUnitController {
 
+    private static final Logger logger = LoggerFactory.getLogger(LabUnitController.class);
+
     private final LabUnitService labUnitService;
 
     public LabUnitController(final LabUnitService labUnitService) {
@@ -22,6 +26,7 @@ public class LabUnitController {
 
     @GetMapping("/names")
     public List<LabUnitDto> getLabUnitNames() {
+        logger.debug("Called getLabUnitNames");
         return labUnitService
                 .findAll()
                 .stream()
@@ -31,6 +36,7 @@ public class LabUnitController {
 
     @GetMapping("/{id}/name")
     public LabUnitDto getLabUnitNameById(@PathVariable final Integer id) {
+        logger.debug("Called getLabUnitNameById with id [{}]", id);
         final LabUnit labUnit = labUnitService.getById(id);
         return new LabUnitDto(labUnit.getId(), labUnit.getName());
     }

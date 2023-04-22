@@ -52,6 +52,7 @@ public class BookingRequestHandler {
     }
 
     public void handleRegistration(final BookingRegistrationRequest registrationRequest) {
+        logger.info("Start handling registration request [{}]", registrationRequest);
         try {
             final User user = userService.getByOsUsernameName(registrationRequest.osUsername());
             if (user == null) {

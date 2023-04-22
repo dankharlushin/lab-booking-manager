@@ -3,8 +3,8 @@ package ru.github.dankharlushin.telegramui.service;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 import ru.github.dankharlushin.telegramui.model.CallbackQueryDto;
-import ru.github.dankharlushin.telegramui.model.SourceCallbackButton;
-import ru.github.dankharlushin.telegramui.model.SourceLinkButton;
+import ru.github.dankharlushin.telegramui.model.source.SourceCallbackButton;
+import ru.github.dankharlushin.telegramui.model.source.SourceLinkButton;
 
 import static com.vdurmont.emoji.EmojiParser.parseToUnicode;
 

@@ -7,9 +7,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import ru.github.dankharlushin.telegramui.model.SourceButton;
-import ru.github.dankharlushin.telegramui.model.SourceCallbackButton;
-import ru.github.dankharlushin.telegramui.model.SourceLinkButton;
+import ru.github.dankharlushin.telegramui.model.source.SourceButton;
+import ru.github.dankharlushin.telegramui.model.source.SourceCallbackButton;
+import ru.github.dankharlushin.telegramui.model.source.SourceLinkButton;
 
 import java.util.ArrayList;
 import java.util.List;

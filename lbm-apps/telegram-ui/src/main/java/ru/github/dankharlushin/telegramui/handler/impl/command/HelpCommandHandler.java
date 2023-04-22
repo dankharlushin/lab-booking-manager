@@ -12,14 +12,14 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 
 @Component
-public class StartCommandHandler implements CommandHandler {
+public class HelpCommandHandler implements CommandHandler {
 
-    private static final String COMMAND = "/start";
+    private static final String COMMAND = "/help";
     private static final String HELP_MESSAGE_CODE = "helpMessage";
 
     private final BotMessageService messageService;
 
-    public StartCommandHandler(final BotMessageService messageService) {
+    public HelpCommandHandler(final BotMessageService messageService) {
         this.messageService = messageService;
     }
 

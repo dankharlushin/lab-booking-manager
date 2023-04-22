@@ -2,6 +2,8 @@ package ru.github.dankharlushin.telegramui.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -17,6 +19,8 @@ import java.util.List;
 
 @Component
 public abstract class BotRequestHandler<T extends BotRequest> implements CallbackQueryHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(BotRequestHandler.class);
 
     private ObjectMapper objectMapper;
     private BotRequestCacheService requestCacheService;
@@ -47,6 +51,10 @@ public abstract class BotRequestHandler<T extends BotRequest> implements Callbac
             requestCacheService.setRequest(messageId, chatId, request);
             return constructResponse(request, update, authInfo);
         } else {
+            logger.debug("There is no request of type [{}] for chatId [{}] and messageId [{}]",
+                    getRequestType(),
+                    chatId,
+                    messageId);
             return new DefaultUpdateHandler(messageService, getErrorMessageCode()).handle(update, authInfo);
         }
     }

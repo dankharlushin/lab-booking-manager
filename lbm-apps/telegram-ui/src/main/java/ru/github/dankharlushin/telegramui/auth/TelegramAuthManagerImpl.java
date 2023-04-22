@@ -1,13 +1,15 @@
 package ru.github.dankharlushin.telegramui.auth;
 
 import org.apache.http.client.utils.URIBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ru.github.dankharlushin.lbmlib.data.cache.JedisClient;
 import ru.github.dankharlushin.lbmlib.data.dto.TelegramAuthInfo;
-import ru.github.dankharlushin.telegramui.model.SourceLinkButton;
+import ru.github.dankharlushin.telegramui.model.source.SourceLinkButton;
 import ru.github.dankharlushin.telegramui.service.BotMessageService;
 import ru.github.dankharlushin.telegramui.service.SourceButtonService;
 
@@ -28,6 +30,7 @@ public class TelegramAuthManagerImpl implements TelegramAuthManager {
 
     private static final String AUTHORIZATION_MESSAGE_CODE = "authorizationMessage";
     private static final String AUTHORIZATION_BUTTON_TEXT_CODE = "authorizationButtonText";
+    private static final Logger logger = LoggerFactory.getLogger(TelegramAuthManagerImpl.class);
 
     private final JedisClient jedisClient;
     private final BotMessageService messageService;
@@ -66,6 +69,7 @@ public class TelegramAuthManagerImpl implements TelegramAuthManager {
 
     @Override
     public SendMessage createAuthMessage(final long chatId) {
+        logger.info("Creating auth message for chatId [{}]", chatId);
         final String authUrl = generateAuthUrl(chatId);
 
         final SourceLinkButton sourceLinkButton = buttonService.createLinkButton(AUTHORIZATION_BUTTON_TEXT_CODE, authUrl);

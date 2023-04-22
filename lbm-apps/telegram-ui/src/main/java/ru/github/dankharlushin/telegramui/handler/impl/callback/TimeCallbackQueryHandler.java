@@ -9,7 +9,7 @@ import ru.github.dankharlushin.lbmlib.data.dto.TelegramAuthInfo;
 import ru.github.dankharlushin.telegramui.handler.BotRequestHandler;
 import ru.github.dankharlushin.telegramui.model.CallbackQueryDto;
 import ru.github.dankharlushin.telegramui.model.request.CreateBookingRequest;
-import ru.github.dankharlushin.telegramui.model.SourceCallbackButton;
+import ru.github.dankharlushin.telegramui.model.source.SourceCallbackButton;
 import ru.github.dankharlushin.telegramui.service.BotMessageService;
 import ru.github.dankharlushin.telegramui.service.SourceButtonService;
 import ru.github.dankharlushin.telegramui.util.KeyboardUtil;

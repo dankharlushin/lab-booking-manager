@@ -25,6 +25,7 @@ public class LabBookingBotInitializer {
         try {
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
             telegramBotsApi.registerBot(bot);
+            logger.info("Lbm bot was successfully initialized");
         } catch (TelegramApiException e) {
             logger.error("Can not initialize bot", e);
         }
