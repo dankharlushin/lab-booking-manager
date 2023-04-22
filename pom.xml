@@ -24,6 +24,7 @@
         <lombok.version>1.18.26</lombok.version>
         <testcontainers.version>1.17.6</testcontainers.version>
         <telegram.version>6.3.0</telegram.version>
+        <emoji.version>3.2.0</emoji.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,6 +42,12 @@
                 <groupId>org.telegram</groupId>
                 <artifactId>telegrambots</artifactId>
                 <version>${telegram.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.vdurmont</groupId>
+                <artifactId>emoji-java</artifactId>
+                <version>${emoji.version}</version>
             </dependency>
 
             <dependency>

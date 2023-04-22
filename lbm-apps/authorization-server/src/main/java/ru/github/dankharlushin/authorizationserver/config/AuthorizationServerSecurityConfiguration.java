@@ -25,13 +25,14 @@ import ru.github.dankharlushin.authorizationserver.handler.CustomRedirectAuthent
 import ru.github.dankharlushin.authorizationserver.service.OsUserDetailsService;
 import ru.github.dankharlushin.lbmlib.data.cache.JedisClient;
 import ru.github.dankharlushin.lbmlib.data.config.DataLibConfig;
+import ru.github.dankharlushin.lbmlib.data.config.JedisConfig;
 import ru.github.dankharlushin.lbmlib.data.repository.UserRepository;
 
 import java.time.Duration;
 
 @Configuration
 @EnableWebSecurity
-@Import({DataLibConfig.class})
+@Import({DataLibConfig.class, JedisConfig.class})
 public class AuthorizationServerSecurityConfiguration {
 
     private final JedisClient jedisClient;
