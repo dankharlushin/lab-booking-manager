@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Optional;
@@ -35,6 +36,7 @@ public class TelegramAuthManagerImpl implements TelegramAuthManager {
     private final JedisClient jedisClient;
     private final BotMessageService messageService;
     private final SourceButtonService buttonService;
+    private final Duration prolongSessionTime;
     private final String authServerBaseUrl;
     private final String tokenParamName;
     private final String authCallbackUrl;
@@ -45,6 +47,7 @@ public class TelegramAuthManagerImpl implements TelegramAuthManager {
     public TelegramAuthManagerImpl(final JedisClient jedisClient,
                                    final BotMessageService messageService,
                                    final SourceButtonService buttonService,
+                                   @Value("${telegram-ui.auth.prolong-time}") final String prolongSessionTime,
                                    @Value("${telegram-ui.auth.server.base-url}") final String authServerBaseUrl,
                                    @Value("${telegram-ui.auth.token.param-name}") final String tokenParamName,
                                    @Value("${telegram-ui.auth.callback-url}") final String authCallbackUrl,
@@ -53,6 +56,7 @@ public class TelegramAuthManagerImpl implements TelegramAuthManager {
                                    @Value("${telegram-ui.auth.algorithm-type}") final String algorithmType) {
         this.messageService = messageService;
         this.buttonService = buttonService;
+        this.prolongSessionTime = Duration.parse(prolongSessionTime);
         this.authServerBaseUrl = authServerBaseUrl;
         this.jedisClient = jedisClient;
         this.tokenParamName = tokenParamName;
@@ -63,7 +67,7 @@ public class TelegramAuthManagerImpl implements TelegramAuthManager {
     }
 
     @Override
-    public Optional<TelegramAuthInfo> authenticate(final long chatId) {
+    public Optional<TelegramAuthInfo> findAuthInfo(final long chatId) {
         return Optional.ofNullable(jedisClient.get(String.valueOf(chatId), TelegramAuthInfo.class));
     }
 
@@ -90,6 +94,16 @@ public class TelegramAuthManagerImpl implements TelegramAuthManager {
         } catch (final Exception e) {
             throw new IllegalStateException("Can't generate auth url", e);
         }
+    }
+
+    @Override
+    public void prolongAuth(final long chatId) {
+        final String strChatId = String.valueOf(chatId);
+        final TelegramAuthInfo authInfo = jedisClient.get(strChatId, TelegramAuthInfo.class);
+        if (authInfo == null) {
+            throw new IllegalStateException("There is no session by id [" + chatId + "]");
+        }
+        jedisClient.setWithTtl(strChatId, authInfo, prolongSessionTime.getSeconds());
     }
 
     private String encode(final long num) {

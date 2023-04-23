@@ -7,7 +7,9 @@ import java.util.Optional;
 
 public interface TelegramAuthManager {
 
-    Optional<TelegramAuthInfo> authenticate(final long chatId);
+    Optional<TelegramAuthInfo> findAuthInfo(final long chatId);
 
     SendMessage createAuthMessage(final long chatId);
+
+    void prolongAuth(final long chatId);
 }

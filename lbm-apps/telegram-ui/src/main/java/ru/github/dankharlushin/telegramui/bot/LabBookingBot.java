@@ -9,9 +9,10 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.github.dankharlushin.lbmlib.data.dto.TelegramAuthInfo;
 import ru.github.dankharlushin.telegramui.auth.TelegramAuthManager;
 import ru.github.dankharlushin.telegramui.handler.UpdateHandlerManager;
-import ru.github.dankharlushin.telegramui.service.BotMessageService;
+import ru.github.dankharlushin.telegramui.model.BotActionWrapper;
 
 @Component
 public class LabBookingBot extends TelegramLongPollingBot {
@@ -20,18 +21,15 @@ public class LabBookingBot extends TelegramLongPollingBot {
 
     private final TelegramAuthManager telegramAuthManager;
     private final UpdateHandlerManager updateHandlerManager;
-    private final BotMessageService messageService;
     private final String botUsername;
     private final String botToken;
 
     public LabBookingBot(final TelegramAuthManager telegramAuthManager,
                          final UpdateHandlerManager updateHandlerManager,
-                         final BotMessageService messageService,
                          @Value("${telegram-ui.bot.username}") final String botUsername,
                          @Value("${telegram-ui.bot.token}") final String botToken) {
         this.telegramAuthManager = telegramAuthManager;
         this.updateHandlerManager = updateHandlerManager;
-        this.messageService = messageService;
         this.botUsername = botUsername;
         this.botToken = botToken;
     }
@@ -54,15 +52,21 @@ public class LabBookingBot extends TelegramLongPollingBot {
             return;
         }
 
-        telegramAuthManager.authenticate(chatId).ifPresentOrElse(
-                userInfo -> updateHandlerManager.findHandler(update).handle(update, userInfo).forEach(this::tryExecute),
+        telegramAuthManager.findAuthInfo(chatId).ifPresentOrElse(
+                userInfo -> processUpdate(update, userInfo, chatId),
                 () -> tryExecute(telegramAuthManager.createAuthMessage(chatId))
         );
     }
 
     @EventListener
-    public void onEventReceived(BotApiMethod<?> event) {
-        tryExecute(event);
+    public void onEventReceived(BotActionWrapper actionWrapper) {
+        logger.info("Executing event [{}], chatId [{}]", actionWrapper.action(), actionWrapper.chatId());
+        tryExecute(actionWrapper.action());
+    }
+
+    private void processUpdate(final Update update, final TelegramAuthInfo userInfo, final Long chatId) {
+        updateHandlerManager.findHandler(update).handle(update, userInfo).forEach(this::tryExecute);
+        telegramAuthManager.prolongAuth(chatId);
     }
 
     private Long getChatId(final Update update) {

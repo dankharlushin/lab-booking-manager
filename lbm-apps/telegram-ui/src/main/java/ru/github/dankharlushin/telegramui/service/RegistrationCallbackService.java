@@ -5,8 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import ru.github.dankharlushin.telegramui.model.request.CreateBookingRequest;
+import ru.github.dankharlushin.telegramui.model.BotActionWrapper;
 import ru.github.dankharlushin.telegramui.model.TelegramCallbackResponse;
+import ru.github.dankharlushin.telegramui.model.request.CreateBookingRequest;
 
 @Service
 public class RegistrationCallbackService {
@@ -56,6 +57,6 @@ public class RegistrationCallbackService {
                     null,
                     request.getRequesterName(), request.getLabName(), request.getStartDate(), request.getStartTime(), errorMessage);
         }
-        eventPublisher.publishEvent(editMessage);
+        eventPublisher.publishEvent(new BotActionWrapper(editMessage, chatId));
     }
 }
