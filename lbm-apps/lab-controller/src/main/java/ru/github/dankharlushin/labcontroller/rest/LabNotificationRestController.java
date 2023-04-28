@@ -4,14 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.github.dankharlushin.labcontroller.service.LabNotificationService;
-import ru.github.dankharlushin.lbmlib.data.dto.OsSessionExpireNotification;
+import ru.github.dankharlushin.lbmlib.data.dto.notification.impl.LabControllerBookingExpireNotification;
 
-@RestController("/notification")
+@RestController
+@RequestMapping(("/notification"))
 public class LabNotificationRestController {
 
     private static final Logger logger = LoggerFactory.getLogger(LabNotificationRestController.class);
@@ -22,13 +20,13 @@ public class LabNotificationRestController {
         this.notificationService = notificationService;
     }
 
-    @PostMapping("/session-expiration")
-    public ResponseEntity<String> sessionExpiration(@RequestBody final OsSessionExpireNotification notification) {
+    @PostMapping("/expire-booking")
+    public ResponseEntity<String> sessionExpiration(@RequestBody final LabControllerBookingExpireNotification notification) {
         logger.info("Receive session expire notification with id [{}], lab [{}], user [{}]",
                 notification.getId(),
                 notification.getLabAppName(),
                 notification.getOsUsername());
-        notificationService.sessionExpireNotification(notification);
+        notificationService.notifyUser(notification);
         return ResponseEntity.ok().build();
     }
 

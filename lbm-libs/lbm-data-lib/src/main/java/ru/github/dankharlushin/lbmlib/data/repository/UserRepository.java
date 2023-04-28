@@ -8,4 +8,6 @@ import ru.github.dankharlushin.lbmlib.data.entity.User;
 public interface UserRepository extends JpaRepository<User, Integer> {
 
     User findUserByOsUsername(final String osUsername);
+
+    User findUserByChatId(final Long chatId);
 }

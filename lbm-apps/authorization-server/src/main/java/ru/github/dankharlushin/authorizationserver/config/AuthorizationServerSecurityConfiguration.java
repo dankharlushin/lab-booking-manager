@@ -26,7 +26,7 @@ import ru.github.dankharlushin.authorizationserver.service.OsUserDetailsService;
 import ru.github.dankharlushin.lbmlib.data.cache.JedisClient;
 import ru.github.dankharlushin.lbmlib.data.config.DataLibConfig;
 import ru.github.dankharlushin.lbmlib.data.config.JedisConfig;
-import ru.github.dankharlushin.lbmlib.data.repository.UserRepository;
+import ru.github.dankharlushin.lbmlib.data.service.UserService;
 
 import java.time.Duration;
 
@@ -36,7 +36,7 @@ import java.time.Duration;
 public class AuthorizationServerSecurityConfiguration {
 
     private final JedisClient jedisClient;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     private final Duration authSessionTimeout;
     private final String tgTokenParamName;
@@ -48,7 +48,7 @@ public class AuthorizationServerSecurityConfiguration {
     private final String defaultCallbackUrl;
 
     public AuthorizationServerSecurityConfiguration(final JedisClient jedisClient,
-                                                    final UserRepository userRepository,
+                                                    final UserService userService,
                                                     @Value("${server.servlet.session.timeout}")
                                                     final Duration authSessionTimeout,
                                                     @Value("${authorization-server.telegram-ui.auth.token.session-attribute-name}")
@@ -66,7 +66,7 @@ public class AuthorizationServerSecurityConfiguration {
                                                     @Value("${authorization-server.default.redirect-url}")
                                                     final String defaultCallbackUrl) {
         this.jedisClient = jedisClient;
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.authSessionTimeout = authSessionTimeout;
         this.tgTokenParamName = tgTokenParamName;
         this.tgTokenSessionAttrName = tgTokenSessionAttrName;
@@ -114,9 +114,12 @@ public class AuthorizationServerSecurityConfiguration {
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
         return new CustomRedirectAuthenticationSuccessHandler(jedisClient,
                 new DefaultRedirectStrategy(),
+                userService,
                 authSessionTimeout,
                 tgTokenSessionAttrName,
-                tgTokenParamName, tgCallbackParamName, tgCallbackSessionAttrName);
+                tgTokenParamName,
+                tgCallbackParamName,
+                tgCallbackSessionAttrName);
     }
 
     @Bean
@@ -149,6 +152,6 @@ public class AuthorizationServerSecurityConfiguration {
 
     @Bean
     public UserDetailsService osUserDetailsService() {
-        return new OsUserDetailsService(userRepository);
+        return new OsUserDetailsService(userService);
     }
 }

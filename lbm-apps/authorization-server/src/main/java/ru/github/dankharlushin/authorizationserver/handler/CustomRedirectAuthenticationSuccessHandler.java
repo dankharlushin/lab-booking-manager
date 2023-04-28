@@ -12,6 +12,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import ru.github.dankharlushin.authorizationserver.principal.OsUserPrincipal;
 import ru.github.dankharlushin.lbmlib.data.cache.JedisClient;
 import ru.github.dankharlushin.lbmlib.data.dto.TelegramAuthInfo;
+import ru.github.dankharlushin.lbmlib.data.entity.User;
+import ru.github.dankharlushin.lbmlib.data.service.UserService;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -22,6 +24,7 @@ public class CustomRedirectAuthenticationSuccessHandler implements Authenticatio
 
     private final JedisClient jedisClient;
     private final RedirectStrategy redirectStrategy;
+    private final UserService userService;
     private final Duration authSessionTimeout;
     private final String tgTokenSessionAttrName;
     private final String tgTokenParamName;
@@ -30,6 +33,7 @@ public class CustomRedirectAuthenticationSuccessHandler implements Authenticatio
 
     public CustomRedirectAuthenticationSuccessHandler(final JedisClient jedisClient,
                                                       final RedirectStrategy redirectStrategy,
+                                                      final UserService userService,
                                                       final Duration authSessionTimeout,
                                                       final String tgTokenSessionAttrName,
                                                       final String tgTokenParamName,
@@ -37,6 +41,7 @@ public class CustomRedirectAuthenticationSuccessHandler implements Authenticatio
                                                       final String tgCallbackSessionAttrName) {
         this.jedisClient = jedisClient;
         this.redirectStrategy = redirectStrategy;
+        this.userService = userService;
         this.authSessionTimeout = authSessionTimeout;
         this.tgTokenSessionAttrName = tgTokenSessionAttrName;
         this.tgTokenParamName = tgTokenParamName;
@@ -53,7 +58,7 @@ public class CustomRedirectAuthenticationSuccessHandler implements Authenticatio
             final String chatId = (String) session.getAttribute(tgTokenSessionAttrName);
             final String callbackUrl = (String) session.getAttribute(tgCallbackSessionAttrName);
             final OsUserPrincipal user = (OsUserPrincipal) authentication.getPrincipal();
-            jedisClient.setWithTtl(chatId, new TelegramAuthInfo(user.getUsername()), authSessionTimeout.getSeconds());
+            initAuthSession(user.getLabUser(), chatId);
 
             redirectStrategy.sendRedirect(request, response, callbackUrl);
             session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
@@ -67,5 +72,14 @@ public class CustomRedirectAuthenticationSuccessHandler implements Authenticatio
             response.reset();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private void initAuthSession(final User user, final String chatId) {
+        jedisClient.setWithTtl(chatId, new TelegramAuthInfo(user.getOsUsername()), authSessionTimeout.getSeconds());
+        final User previousChatUser = userService.findByChatId(Long.parseLong(chatId));
+        if (previousChatUser != null && !previousChatUser.equals(user)) {
+            userService.updateChatId(previousChatUser, null);
+        }
+        userService.updateChatId(user, Long.valueOf(chatId));
     }
 }

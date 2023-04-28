@@ -4,6 +4,7 @@ import ru.github.dankharlushin.lbmlib.data.dto.Period;
 import ru.github.dankharlushin.lbmlib.data.entity.Booking;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,10 @@ public interface BookingService {
     List<Period> getAvailableTime(final LocalDate date, final Integer labUnitId);
 
     List<Booking> getFutureBookingByUsername(final String osUsername);
+
+    List<Booking> getCreatedBookingByStart(final LocalDateTime startDateTime);
+
+    List<Booking> getCreatedBookingByEnd(final LocalDateTime endDateTime);
 
     Booking getById(final Long id);
 

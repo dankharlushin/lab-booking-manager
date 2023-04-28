@@ -3,13 +3,17 @@ package ru.github.dankharlushin.lbmlib.data.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "lab_users")
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class User {
+@EqualsAndHashCode
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -25,5 +29,7 @@ public class User {
     private String patronymic;
     @Column(name = "study_group")
     private String group;
+    @Column(name = "chat_id")
+    private Long chatId;
 }
 

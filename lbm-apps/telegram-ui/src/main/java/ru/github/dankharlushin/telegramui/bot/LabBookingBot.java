@@ -65,8 +65,8 @@ public class LabBookingBot extends TelegramLongPollingBot {
     }
 
     private void processUpdate(final Update update, final TelegramAuthInfo userInfo, final Long chatId) {
-        updateHandlerManager.findHandler(update).handle(update, userInfo).forEach(this::tryExecute);
         telegramAuthManager.prolongAuth(chatId);
+        updateHandlerManager.findHandler(update).handle(update, userInfo).forEach(this::tryExecute);
     }
 
     private Long getChatId(final Update update) {

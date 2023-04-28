@@ -15,6 +15,10 @@ import java.util.List;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
+    List<Booking> getBookingsByStartDateTimeAndStatusNot(final LocalDateTime startDateTime, final BookingStatus status);
+
+    List<Booking> getBookingsByEndDateTimeAndStatusNot(final LocalDateTime endDateTime, final BookingStatus status);
+
     @Query("select b.lab.appName, b.user.osUsername " +
             "from Booking b " +
             "where b.status <> :status and b.startDateTime < :startDateTime and b.endDateTime > :endDateTime")
