@@ -23,7 +23,7 @@ public class ShellProcessServiceImpl implements ShellProcessService {
 
     @Override
     public List<Integer> getPidsByCommand(final String command) {
-        try (final InputStream pgrep = executor.pgrep(command, Map.of("-x", ""))) {
+        try (final InputStream pgrep = executor.pgrep(command, Map.of("-f", ""))) {
             final byte[] output = pgrep.readAllBytes();
             if (output.length > 0) {
                 final String strPgrepOutput = new String(output);//fixme check empty case

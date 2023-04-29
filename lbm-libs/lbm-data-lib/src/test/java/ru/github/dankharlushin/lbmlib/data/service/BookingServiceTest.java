@@ -130,6 +130,54 @@ class BookingServiceTest {
         assertThat(availableTime.get(0).start().isEqual(LocalDateTime.of(date, LocalTime.of(10, 10))), is(true));
     }
 
+    @Test
+    void testCreatedBookingByStartBetween() {
+        final LocalDate date = LocalDate.of(2023, 4, 29);
+        final LocalTime time = LocalTime.of(18, 20);
+        final Booking booking = Booking.builder()
+                .user(testUsers.get(0))
+                .lab(testLabs.get(1))
+                .status(BookingStatus.CREATED)
+                .startDateTime(LocalDateTime.of(date, time))
+                .endDateTime(LocalDateTime.of(date, time.plusMinutes(90)))
+                .build();
+
+        entityManager.persist(booking);
+        final long deltaSeconds = 30L;
+
+        List<Booking> bookings = bookingService
+                .getCreatedBookingByStartBetween(LocalDateTime.of(date, time), LocalDateTime.of(date, time.plusSeconds(deltaSeconds)));
+        assertThat(bookings.size(), is(1));
+
+        bookings = bookingService
+                .getCreatedBookingByStartBetween(LocalDateTime.of(date, time.minusSeconds(deltaSeconds)), LocalDateTime.of(date, time));
+        assertThat(bookings.size(), is(0));
+    }
+
+    @Test
+    void testCreatedBookingByEndBetween() {
+        final LocalDate date = LocalDate.of(2023, 4, 29);
+        final LocalTime time = LocalTime.of(18, 20);
+        final Booking booking = Booking.builder()
+                .user(testUsers.get(0))
+                .lab(testLabs.get(1))
+                .status(BookingStatus.CREATED)
+                .startDateTime(LocalDateTime.of(date, time.minusMinutes(90)))
+                .endDateTime(LocalDateTime.of(date, time))
+                .build();
+
+        entityManager.persist(booking);
+        final long deltaSeconds = 30L;
+
+        List<Booking> bookings = bookingService
+                .getCreatedBookingByEndBetween(LocalDateTime.of(date, time), LocalDateTime.of(date, time.plusSeconds(deltaSeconds)));
+        assertThat(bookings.size(), is(1));
+
+        bookings = bookingService
+                .getCreatedBookingByEndBetween(LocalDateTime.of(date, time.minusSeconds(deltaSeconds)), LocalDateTime.of(date, time));
+        assertThat(bookings.size(), is(0));
+    }
+
     private List<User> createTestUsers() {
         List<User> users = new ArrayList<>();
         for (int i = 0; i < 2; i++) {

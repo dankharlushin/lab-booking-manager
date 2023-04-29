@@ -15,9 +15,17 @@ import java.util.List;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    List<Booking> getBookingsByStartDateTimeAndStatusNot(final LocalDateTime startDateTime, final BookingStatus status);
+    @Query("select b from Booking b " +
+            "where b.status <> :status and b.startDateTime >= :startDateTimeBegin and b.startDateTime < :startDateTimeEnd")
+    List<Booking> getBookingsByStartDateTimeBetweenAndStatusNot(@Param("status") final BookingStatus status,
+                                                                @Param("startDateTimeBegin") final LocalDateTime startDateTimeBegin,
+                                                                @Param("startDateTimeEnd") final LocalDateTime startDateTimeEnd);
 
-    List<Booking> getBookingsByEndDateTimeAndStatusNot(final LocalDateTime endDateTime, final BookingStatus status);
+    @Query("select b from Booking b " +
+            "where b.status <> :status and b.endDateTime >= :endDateTimeBegin and b.endDateTime < :endDateTimeEnd")
+    List<Booking> getBookingsByEndDateTimeBetweenAndStatusNot(@Param("status") final BookingStatus status,
+                                                              @Param("endDateTimeBegin") final LocalDateTime endDateTimeBegin,
+                                                              @Param("endDateTimeEnd") final LocalDateTime endDateTimeEnd);
 
     @Query("select b.lab.appName, b.user.osUsername " +
             "from Booking b " +

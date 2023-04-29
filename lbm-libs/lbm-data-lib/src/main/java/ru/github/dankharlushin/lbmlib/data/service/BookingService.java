@@ -18,9 +18,9 @@ public interface BookingService {
 
     List<Booking> getFutureBookingByUsername(final String osUsername);
 
-    List<Booking> getCreatedBookingByStart(final LocalDateTime startDateTime);
+    List<Booking> getCreatedBookingByStartBetween(final LocalDateTime startDateTimeBegin, final LocalDateTime startDateTimeEnd);
 
-    List<Booking> getCreatedBookingByEnd(final LocalDateTime endDateTime);
+    List<Booking> getCreatedBookingByEndBetween(final LocalDateTime endDateTimeBegin, final LocalDateTime endDateTimeEnd);
 
     Booking getById(final Long id);
 

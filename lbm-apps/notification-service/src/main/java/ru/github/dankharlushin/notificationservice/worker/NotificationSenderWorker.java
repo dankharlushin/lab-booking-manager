@@ -1,4 +1,4 @@
-package ru.github.dankharlushin.notificationservice.manager;
+package ru.github.dankharlushin.notificationservice.worker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,17 +14,17 @@ import ru.github.dankharlushin.notificationservice.creator.NotificationCreator;
 import java.util.List;
 
 @Component
-public class NotificationSenderManager {
+public class NotificationSenderWorker {
 
-    private static final Logger logger = LoggerFactory.getLogger(NotificationSenderManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(NotificationSenderWorker.class);
 
     private final List<NotificationCreator<? extends Notification>> notificationCreators;
     private final BookingService bookingService;
     private final RestTemplate restTemplate;
 
-    public NotificationSenderManager(final List<NotificationCreator<? extends Notification>> notificationCreators,
-                                     final BookingService bookingService,
-                                     final RestTemplate restTemplate) {
+    public NotificationSenderWorker(final List<NotificationCreator<? extends Notification>> notificationCreators,
+                                    final BookingService bookingService,
+                                    final RestTemplate restTemplate) {
         this.notificationCreators = notificationCreators;
         this.bookingService = bookingService;
         this.restTemplate = restTemplate;
@@ -32,6 +32,7 @@ public class NotificationSenderManager {
 
     @Scheduled(fixedDelayString = "${notification-service.notification.check-interval}")
     public void work() {
+        logger.info("Finding notifications...");
         notificationCreators.stream()
                 .flatMap(creator -> creator.createNotificationsCommon(bookingService).stream())
                 .forEach(this::send);

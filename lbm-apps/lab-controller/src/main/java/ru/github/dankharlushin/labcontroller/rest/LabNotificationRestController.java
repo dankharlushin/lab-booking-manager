@@ -9,7 +9,7 @@ import ru.github.dankharlushin.labcontroller.service.LabNotificationService;
 import ru.github.dankharlushin.lbmlib.data.dto.notification.impl.LabControllerBookingExpireNotification;
 
 @RestController
-@RequestMapping(("/notification"))
+@RequestMapping("/notification")
 public class LabNotificationRestController {
 
     private static final Logger logger = LoggerFactory.getLogger(LabNotificationRestController.class);

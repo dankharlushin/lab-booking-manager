@@ -118,13 +118,15 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> getCreatedBookingByStart(final LocalDateTime startDateTime) {
-        return bookingRepository.getBookingsByStartDateTimeAndStatusNot(startDateTime, BookingStatus.CANCELED);
+    public List<Booking> getCreatedBookingByStartBetween(final LocalDateTime startDateTimeBegin, final LocalDateTime startDateTimeEnd) {
+        return bookingRepository.getBookingsByStartDateTimeBetweenAndStatusNot(BookingStatus.CANCELED,
+                startDateTimeBegin,
+                startDateTimeEnd);
     }
 
     @Override
-    public List<Booking> getCreatedBookingByEnd(final LocalDateTime endDateTime) {
-        return bookingRepository.getBookingsByEndDateTimeAndStatusNot(endDateTime, BookingStatus.CANCELED);
+    public List<Booking> getCreatedBookingByEndBetween(final LocalDateTime endDateTimeBegin, final LocalDateTime endDateTimeEnd) {
+        return bookingRepository.getBookingsByEndDateTimeBetweenAndStatusNot(BookingStatus.CANCELED, endDateTimeBegin, endDateTimeEnd);
     }
 
     @Override

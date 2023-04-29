@@ -3,6 +3,7 @@ package ru.github.dankharlushin.lbmlib.shell.executor;
 import ru.github.dankharlushin.lbmlib.shell.exception.ExecutionException;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 public interface CommandLineExecutor {
@@ -16,5 +17,5 @@ public interface CommandLineExecutor {
     int notifySend(final String summary,
                    final String body,
                    final Map<String, String> options,
-                   final Map<String, String> preExecutionOptions) throws ExecutionException;
+                   final List<Map.Entry<String, String>> preExecutionOptions) throws ExecutionException;
 }

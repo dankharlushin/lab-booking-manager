@@ -51,7 +51,7 @@ public class CommandLineExecutorImpl implements CommandLineExecutor {
     public int notifySend(final String summary,
                           final String body,
                           final Map<String, String> options,
-                          final Map<String, String> preExecutionOptions) throws ExecutionException {
+                          final List<Map.Entry<String, String>> preExecutionOptions) throws ExecutionException {
         final List<String> commandArgs = new CommandBuilder()
                 .withCommandName(NOTIFY_SEND_COMMAND)
                 .withPreExecutionOptions(preExecutionOptions)
@@ -78,8 +78,8 @@ public class CommandLineExecutorImpl implements CommandLineExecutor {
 
         private String commandName;
         private String[] parameters;
-        private Map<String, String> preExecutionOptions;
         private Map<String, String> options;
+        private List<Map.Entry<String, String>> preExecutionOptions;
 
         List<String> command;
 
@@ -97,7 +97,7 @@ public class CommandLineExecutorImpl implements CommandLineExecutor {
             return this;
         }
 
-        public CommandBuilder withPreExecutionOptions(final Map<String, String> preExecutionOptions) {
+        public CommandBuilder withPreExecutionOptions(final List<Map.Entry<String, String>> preExecutionOptions) {
             this.preExecutionOptions = preExecutionOptions;
             return this;
         }
@@ -109,7 +109,7 @@ public class CommandLineExecutorImpl implements CommandLineExecutor {
 
         public List<String> build() {
             final List<String> cmd = new ArrayList<>();
-            addOptions(preExecutionOptions, cmd);
+            if (preExecutionOptions != null) { preExecutionOptions.forEach(opt -> addOptions(Map.ofEntries(opt), cmd)); }
             cmd.add(commandName);
             if (parameters != null) { cmd.addAll(Arrays.stream(parameters).filter(Objects::nonNull).toList()); }
             addOptions(options, cmd);
