@@ -2,6 +2,8 @@ package ru.github.dankharlushin.lbmlib.shell.service.notification;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import ru.github.dankharlushin.lbmlib.shell.exception.ExecutionException;
 import ru.github.dankharlushin.lbmlib.shell.executor.CommandLineExecutor;
@@ -17,16 +19,19 @@ public class ShellNotificationServiceImpl implements ShellNotificationService {
     private static final Logger logger = LoggerFactory.getLogger(ShellNotificationServiceImpl.class);
 
     private final CommandLineExecutor executor;
+    private final MessageSourceAccessor sourceAccessor;
 
-    public ShellNotificationServiceImpl(final CommandLineExecutor executor) {
+    public ShellNotificationServiceImpl(final CommandLineExecutor executor,
+                                        final MessageSourceAccessor sourceAccessor) {
         this.executor = executor;
+        this.sourceAccessor = sourceAccessor;
     }
 
     @Override
-    public void notifyUser(final String username,
-                           final String messageTitle,
-                           final String messageBody,
-                           final Urgency urgency) {
+    public void sendSimpleNotification(final String username,
+                                       final String messageTitle,
+                                       final String messageBody,
+                                       final Urgency urgency) {
         try {
             final List<Map.Entry<String, String>> preExecutionOptions = new ArrayList<>();
             preExecutionOptions.add(new AbstractMap.SimpleEntry<>("sudo", ""));
@@ -43,5 +48,18 @@ public class ShellNotificationServiceImpl implements ShellNotificationService {
         } catch (final ExecutionException e) {
             logger.error("Unable to notify user [{}]", username, e);
         }
+    }
+
+    @Override
+    public void sendMessageSourceNotification(final String username,
+                                              final String messageTitleCode,
+                                              final String messageBodyCode,
+                                              final Urgency urgency,
+                                              @Nullable final Object[] titleArgs,
+                                              @Nullable final Object[] bodyArgs) {
+        final String messageTitle = sourceAccessor.getMessage(messageTitleCode, titleArgs);
+        final String messageBody = sourceAccessor.getMessage(messageBodyCode, bodyArgs);
+
+        sendSimpleNotification(username, messageTitle, messageBody, urgency);
     }
 }
