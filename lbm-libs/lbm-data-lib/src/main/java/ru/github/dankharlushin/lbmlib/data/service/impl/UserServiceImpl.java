@@ -7,6 +7,8 @@ import ru.github.dankharlushin.lbmlib.data.entity.User;
 import ru.github.dankharlushin.lbmlib.data.repository.UserRepository;
 import ru.github.dankharlushin.lbmlib.data.service.UserService;
 
+import java.util.stream.Stream;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -24,6 +26,26 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByChatId(final long chatId) {
         return userRepository.findUserByChatId(chatId);
+    }
+
+    @Override
+    public boolean existsByOsUsername(final String osUsername) {
+        return userRepository.existsByOsUsername(osUsername);
+    }
+
+    @Override
+    public Stream<User> findAll() {
+        return userRepository.streamAll();
+    }
+
+    @Override
+    public void save(final User user) {
+        userRepository.save(user);
+    }
+
+    @Override
+    public void deleteByOsUsername(final String osUsername) {
+        userRepository.deleteByOsUsername(osUsername);
     }
 
     @Override

@@ -25,6 +25,7 @@
         <testcontainers.version>1.17.6</testcontainers.version>
         <telegram.version>6.3.0</telegram.version>
         <emoji.version>3.2.0</emoji.version>
+        <apache.commons.io.verion>2.11.0</apache.commons.io.verion>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -48,6 +49,12 @@
                 <groupId>com.vdurmont</groupId>
                 <artifactId>emoji-java</artifactId>
                 <version>${emoji.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${apache.commons.io.verion}</version>
             </dependency>
 
             <dependency>
