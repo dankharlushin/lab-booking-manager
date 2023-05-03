@@ -1,10 +1,9 @@
 package ru.github.dankharlushin.lbmlib.data.service;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import ru.github.dankharlushin.lbmlib.data.entity.User;
-
-import java.util.stream.Stream;
 
 public interface UserService {
 
@@ -14,9 +13,11 @@ public interface UserService {
 
     boolean existsByOsUsername(final String osUsername);
 
-    Stream<User> findAll();
+    Slice<User> findAll();
 
     void save(final User user);
+
+    void deleteAllById(Iterable<Integer> ids);
 
     void deleteByOsUsername(final String osUsername);
 

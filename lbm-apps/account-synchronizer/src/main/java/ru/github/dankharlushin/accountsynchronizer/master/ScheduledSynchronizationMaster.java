@@ -15,7 +15,7 @@ public class ScheduledSynchronizationMaster {
         this.synchronizationWorker = synchronizationWorker;
     }
 
-    @Scheduled(fixedRate = 3000)
+    @Scheduled(fixedDelayString = "${account-synchronizer.synchronization.scheduled.fixed-delay-ms}")
     public void synchronize() {
         synchronizationWorker.work();
     }
