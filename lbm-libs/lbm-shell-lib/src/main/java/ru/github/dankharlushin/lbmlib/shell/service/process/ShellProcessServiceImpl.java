@@ -2,7 +2,7 @@ package ru.github.dankharlushin.lbmlib.shell.service.process;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.github.dankharlushin.lbmlib.shell.exception.ExecutionException;
 import ru.github.dankharlushin.lbmlib.shell.executor.CommandLineExecutor;
 
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-@Component
+@Service
 public class ShellProcessServiceImpl implements ShellProcessService {
 
     private static final Logger logger = LoggerFactory.getLogger(ShellProcessServiceImpl.class);

@@ -12,7 +12,19 @@ public interface CommandLineExecutor {
 
     InputStream ps(final Map<String, String> options) throws ExecutionException;
 
+    InputStream ls(final String file, final Map<String, String> options) throws ExecutionException;
+
     int kill(final int pid) throws ExecutionException;
+
+    int chmod(final int permissions,
+              final String file,
+              final Map<String, String> options,
+              final List<Map.Entry<String, String>> preExecutionOptions) throws ExecutionException;
+
+    int chgrp(final String group,
+              final String file,
+              final Map<String, String> options,
+              final List<Map.Entry<String, String>> preExecutionOptions) throws ExecutionException;
 
     int notifySend(final String summary,
                    final String body,

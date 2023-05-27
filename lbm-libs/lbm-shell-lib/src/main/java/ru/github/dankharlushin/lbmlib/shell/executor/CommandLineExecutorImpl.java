@@ -15,6 +15,9 @@ public class CommandLineExecutorImpl implements CommandLineExecutor {
     private static final String PS_COMMAND = "ps";
     private static final String KILL_COMMAND = "kill";
     private static final String NOTIFY_SEND_COMMAND = "notify-send";
+    private static final String CHGRP_COMMAND = "chgrp";
+    private static final String CHMOD_COMMAND = "chmod";
+    private static final String LS_COMMAND = "ls";
 
     @Override
     public InputStream pgrep(final String pattern, final Map<String, String> options) throws ExecutionException {
@@ -38,10 +41,50 @@ public class CommandLineExecutorImpl implements CommandLineExecutor {
     }
 
     @Override
+    public InputStream ls(final String file, final Map<String, String> options) throws ExecutionException {
+        final List<String> command = new CommandBuilder()
+                .withCommandName(LS_COMMAND)
+                .withOptions(options)
+                .build();
+        final Process process = execute(command);
+        return process.getInputStream();
+    }
+
+    @Override
     public int kill(final int pid) throws ExecutionException {
         final List<String> command = new CommandBuilder()
                 .withCommandName(KILL_COMMAND)
                 .withParameters(String.valueOf(pid))
+                .build();
+        final Process process = execute(command);
+        return process.exitValue();
+    }
+
+    @Override
+    public int chmod(final int permissions,
+                     final String file,
+                     final Map<String, String> options,
+                     final List<Map.Entry<String, String>> preExecutionOptions) throws ExecutionException {
+        final List<String> command = new CommandBuilder()
+                .withCommandName(CHMOD_COMMAND)
+                .withPreExecutionOptions(preExecutionOptions)
+                .withParameters(String.valueOf(permissions), file)
+                .withOptions(options)
+                .build();
+        final Process process = execute(command);
+        return process.exitValue();
+    }
+
+    @Override
+    public int chgrp(final String group,
+                     final String file,
+                     final Map<String, String> options,
+                     final List<Map.Entry<String, String>> preExecutionOptions) throws ExecutionException {
+        final List<String> command = new CommandBuilder()
+                .withCommandName(CHGRP_COMMAND)
+                .withPreExecutionOptions(preExecutionOptions)
+                .withParameters(group, file)
+                .withOptions(options)
                 .build();
         final Process process = execute(command);
         return process.exitValue();

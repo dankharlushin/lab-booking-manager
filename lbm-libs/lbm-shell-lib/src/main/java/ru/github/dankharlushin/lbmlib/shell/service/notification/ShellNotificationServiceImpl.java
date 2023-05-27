@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.github.dankharlushin.lbmlib.shell.exception.ExecutionException;
 import ru.github.dankharlushin.lbmlib.shell.executor.CommandLineExecutor;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Service
 public class ShellNotificationServiceImpl implements ShellNotificationService {
 
     private static final Logger logger = LoggerFactory.getLogger(ShellNotificationServiceImpl.class);
@@ -37,11 +37,7 @@ public class ShellNotificationServiceImpl implements ShellNotificationService {
             preExecutionOptions.add(new AbstractMap.SimpleEntry<>("sudo", ""));
             preExecutionOptions.add(new AbstractMap.SimpleEntry<>("-u", username));
 
-            final int exitValue = executor.notifySend(
-                    messageTitle,
-                    messageBody,
-                    Map.of(),
-                    preExecutionOptions);
+            final int exitValue = executor.notifySend(messageTitle, messageBody, Map.of(), preExecutionOptions);
             if (exitValue != 0) {
                 logger.error("Unable to notify user [{}], exit value [{}]", username, exitValue);
             }

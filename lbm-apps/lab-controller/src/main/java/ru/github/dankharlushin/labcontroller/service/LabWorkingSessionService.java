@@ -1,35 +1,32 @@
-package ru.github.dankharlushin.labcontroller.master;
+package ru.github.dankharlushin.labcontroller.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.github.dankharlushin.lbmlib.data.service.BookingService;
 import ru.github.dankharlushin.lbmlib.data.service.LabUnitService;
 import ru.github.dankharlushin.lbmlib.shell.service.process.ShellProcessService;
 
 import java.util.*;
 
-@Component
-public class LabWorkingSessionController {
+@Service
+public class LabWorkingSessionService {
 
-    private static final Logger logger = LoggerFactory.getLogger(LabWorkingSessionController.class);
+    private static final Logger logger = LoggerFactory.getLogger(LabWorkingSessionService.class);
 
     private final BookingService bookingService;
     private final LabUnitService labUnitService;
     private final ShellProcessService shellProcessService;
 
-    public LabWorkingSessionController(final BookingService bookingService,
-                                       final LabUnitService labUnitService,
-                                       final ShellProcessService shellProcessService) {
+    public LabWorkingSessionService(final BookingService bookingService,
+                                    final LabUnitService labUnitService,
+                                    final ShellProcessService shellProcessService) {
         this.bookingService = bookingService;
         this.labUnitService = labUnitService;
         this.shellProcessService = shellProcessService;
     }
 
-    @Scheduled(fixedDelayString = "${lab-controller.session.fixed-delay-ms}")
-    public void check() {
-        logger.info("Start bookings verification");
+    public void verifySessions() {
         try {
             final Map<String, String> expectedAppToUser = bookingService.getCurrentBookingLabAppNameToUsername();
             final List<String> labAppNames = labUnitService.findAllLabApps();
