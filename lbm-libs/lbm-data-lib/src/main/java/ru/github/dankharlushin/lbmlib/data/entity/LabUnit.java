@@ -19,4 +19,6 @@ public class LabUnit implements Serializable {
     private String name;
     @Column(name = "app_name")
     private String appName;
+    @Column(name = "node_address")
+    private String nodeAddress;
 }

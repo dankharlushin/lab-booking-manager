@@ -12,25 +12,24 @@ public class LabControllerBookingExpireNotification implements LabControllerNoti
     private final String labAppName;
     private final Integer expireInMinutes;
     private final NotificationUrgency urgencyLevel;
-    private String address;
+    private final String address;
 
     public LabControllerBookingExpireNotification(final String id,
                                                   final String osUsername,
                                                   final String labAppName,
                                                   final Integer expireInMinutes,
-                                                  final NotificationUrgency urgencyLevel) {
+                                                  final NotificationUrgency urgencyLevel,
+                                                  final String address) {
         this.id = id;
         this.osUsername = osUsername;
         this.labAppName = labAppName;
         this.expireInMinutes = expireInMinutes;
         this.urgencyLevel = urgencyLevel;
+        this.address = address;
     }
 
     @Override
     public void setAddress(final String address) {
-        if (this.address != null) {
-            throw new UnsupportedOperationException("Address can't be reset");
-        }
-        this.address = address;
+        throw new UnsupportedOperationException("Address can't be reset");
     }
 }

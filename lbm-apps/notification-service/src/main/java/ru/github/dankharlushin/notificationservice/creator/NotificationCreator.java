@@ -7,19 +7,9 @@ import java.util.List;
 
 public abstract class NotificationCreator<T extends Notification> {
 
-    public final List<T> createNotificationsCommon(final BookingService bookingService) {
-        final List<T> notifications = createNotification(bookingService);
-        notifications.forEach(notification -> notification.setAddress(notificationAddress()));
-        return notifications;
+    public List<T> createNotificationsCommon(final BookingService bookingService) {
+        return createNotification(bookingService);
     }
 
     protected abstract List<T> createNotification(final BookingService bookingService);
-
-    protected final String notificationAddress() {
-        return baseAddress() + addressSuffix();
-    }
-
-    protected abstract String baseAddress();
-
-    protected abstract String addressSuffix();
 }

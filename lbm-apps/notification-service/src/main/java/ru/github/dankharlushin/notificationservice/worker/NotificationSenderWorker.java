@@ -30,7 +30,7 @@ public class NotificationSenderWorker {
         this.restTemplate = restTemplate;
     }
 
-    @Scheduled(fixedDelayString = "${notification-service.notification.check-interval}")
+    @Scheduled(fixedRateString = "${notification-service.notification.check-interval}")
     public void work() {
         logger.info("Finding notifications...");
         notificationCreators.stream()

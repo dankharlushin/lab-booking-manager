@@ -5,11 +5,10 @@ import ru.github.dankharlushin.lbmlib.data.dto.notification.LabControllerNotific
 
 public abstract class LabControllerNotificationCreator<T extends LabControllerNotification> extends NotificationCreator<T> {
 
-    @Value("${notification-service.lab-controller.base-url}")
-    private String labControllerBaseUrl;
+    @Value("${notification-service.lab-controller.suffix}")
+    private String notificationSuffix;
 
-    @Override
-    protected String baseAddress() {
-        return labControllerBaseUrl;
+    protected String getNotificationAddressSuffix() {
+        return notificationSuffix;
     }
 }

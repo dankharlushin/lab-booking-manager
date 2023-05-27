@@ -21,12 +21,10 @@ public class LabControllerBookingExpireNotificationCreator
     private final Integer checkIntervalInMillis;
     private final Duration beforeBookingEnd;
 
-    public LabControllerBookingExpireNotificationCreator(@Value("${notification-service.lab-controller.expire-booking-suffix}")
-                                                         final String endBookingUrlSuffix,
-                                                         @Value("${notification-service.notification.check-interval}")
-                                                         final Integer checkIntervalInMillis,
-                                                         @Value("${notification-service.notification.time.before.booking-end}")
-                                                         final String beforeBookingEnd) {
+    public LabControllerBookingExpireNotificationCreator(
+            @Value("${notification-service.lab-controller.expire-booking-suffix}") final String endBookingUrlSuffix,
+            @Value("${notification-service.notification.check-interval}") final Integer checkIntervalInMillis,
+            @Value("${notification-service.notification.time.before.booking-end}") final String beforeBookingEnd) {
         this.endBookingUrlSuffix = endBookingUrlSuffix;
         this.checkIntervalInMillis = checkIntervalInMillis;
         this.beforeBookingEnd = Duration.parse(beforeBookingEnd);
@@ -44,13 +42,9 @@ public class LabControllerBookingExpireNotificationCreator
                         b.getUser().getOsUsername(),
                         b.getLab().getAppName(),
                         (int) beforeBookingEnd.toMinutes(),
-                        NotificationUrgency.NORMAL)
-                )
+                        NotificationUrgency.NORMAL,
+                        b.getLab().getNodeAddress() + getNotificationAddressSuffix() + endBookingUrlSuffix))
                 .toList();
     }
 
-    @Override
-    protected String addressSuffix() {
-        return endBookingUrlSuffix;
-    }
 }
