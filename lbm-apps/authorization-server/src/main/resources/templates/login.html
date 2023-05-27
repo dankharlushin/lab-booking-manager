@@ -2,18 +2,98 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta name="viewport" content="width=device-width">
+    <style>
+        body {
+            background-color: #9f9da7;
+            font-size: 1.6rem;
+            font-family: "Open Sans", sans-serif;
+            color: #2b3e51;
+        }
+
+        p {
+            position: relative;
+        }
+
+        input {
+            display: block;
+            box-sizing: border-box;
+            width: 100%;
+            outline: none;
+            height: 60px;
+            line-height: 60px;
+            border-radius: 4px;
+            padding: 0 0 0 10px;
+            margin: 0;
+            color: #2b3e51;
+            border: 1px solid #c2c0ca;
+            font-style: normal;
+            font-size: 22px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            position: relative;
+            background: none;
+        }
+
+        input[type="submit"] {
+            border: none;
+            background-color: #3ca9e2;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            -webkit-transition: all 0.2s ease;
+            transition: all 0.2s ease;
+            font-size: 18px;
+            position: relative;
+            display: inline-block;
+            text-align: center;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0a73af;
+            -webkit-transition: all 0.2s ease;
+            transition: all 0.2s ease;
+        }
+
+        #login-form-wrap {
+            background-color: #fff;
+            width: 35%;
+            margin: 30px auto;
+            text-align: center;
+            padding: 20px 0 30px 0;
+            border-radius: 4px;
+            box-shadow: 0 30px 50px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        #login-form {
+            padding: 0 60px;
+        }
+
+        #error-text {
+            color: #b90f2c;
+            font-style: normal;
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
-<div th:if="${param.error}">
-    Invalid username and password.
+<div id="login-form-wrap">
+    <h2>Login</h2>
+    <div th:if="${param.error}" id="error-text">
+        Invalid username and password
+    </div>
+    <form id="login-form" th:action="@{/login}" method="post">
+        <p>
+            <input type="text" name="username" placeholder="username"/>
+        </p>
+        <p>
+            <input type="password" name="password" placeholder="password"/>
+        </p>
+        <p>
+            <input type="submit" value="Sign In"/>
+        </p>
+    </form>
 </div>
-<div th:if="${param.logout}">
-    You have been logged out.
-</div>
-<form th:action="@{/login}" method="post">
-    <div><label> User Name : <input type="text" name="username"/> </label></div>
-    <div><label> Password: <input type="password" name="password"/> </label></div>
-    <div><input type="submit" value="Sign In"/></div>
-</form>
 </body>
 </html>
