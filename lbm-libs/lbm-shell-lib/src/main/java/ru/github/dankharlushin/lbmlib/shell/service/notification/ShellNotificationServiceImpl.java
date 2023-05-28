@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import ru.github.dankharlushin.lbmlib.shell.exception.ExecutionException;
 import ru.github.dankharlushin.lbmlib.shell.executor.CommandLineExecutor;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,16 +34,20 @@ public class ShellNotificationServiceImpl implements ShellNotificationService {
                                        final String messageTitle,
                                        final String messageBody,
                                        final Urgency urgency) {
-        try {
+        try (final InputStream idStream = executor.id(username, Map.of("-u", ""))) {
+            final String userId = new String(idStream.readAllBytes()).replace("\n", "");
             final List<Map.Entry<String, String>> preExecutionOptions = new ArrayList<>();
             preExecutionOptions.add(new AbstractMap.SimpleEntry<>("sudo", ""));
             preExecutionOptions.add(new AbstractMap.SimpleEntry<>("-u", username));
+            preExecutionOptions.add(new AbstractMap.SimpleEntry<>("DISPLAY=:0", ""));
+            preExecutionOptions.add(
+                    new AbstractMap.SimpleEntry<>("DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/" + userId + "/bus", ""));
 
             final int exitValue = executor.notifySend(messageTitle, messageBody, Map.of(), preExecutionOptions);
             if (exitValue != 0) {
                 logger.error("Unable to notify user [{}], exit value [{}]", username, exitValue);
             }
-        } catch (final ExecutionException e) {
+        } catch (final ExecutionException | IOException e) {
             logger.error("Unable to notify user [{}]", username, e);
         }
     }

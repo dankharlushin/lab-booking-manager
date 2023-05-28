@@ -18,6 +18,7 @@ public class CommandLineExecutorImpl implements CommandLineExecutor {
     private static final String CHGRP_COMMAND = "chgrp";
     private static final String CHMOD_COMMAND = "chmod";
     private static final String LS_COMMAND = "ls";
+    private static final String ID_COMMAND = "id";
 
     @Override
     public InputStream pgrep(final String pattern, final Map<String, String> options) throws ExecutionException {
@@ -44,6 +45,17 @@ public class CommandLineExecutorImpl implements CommandLineExecutor {
     public InputStream ls(final String file, final Map<String, String> options) throws ExecutionException {
         final List<String> command = new CommandBuilder()
                 .withCommandName(LS_COMMAND)
+                .withOptions(options)
+                .build();
+        final Process process = execute(command);
+        return process.getInputStream();
+    }
+
+    @Override
+    public InputStream id(final String user, final Map<String, String> options) throws ExecutionException {
+        final List<String> command = new CommandBuilder()
+                .withParameters(user)
+                .withCommandName(ID_COMMAND)
                 .withOptions(options)
                 .build();
         final Process process = execute(command);

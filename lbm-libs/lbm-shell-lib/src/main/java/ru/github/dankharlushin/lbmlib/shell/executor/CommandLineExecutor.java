@@ -14,6 +14,8 @@ public interface CommandLineExecutor {
 
     InputStream ls(final String file, final Map<String, String> options) throws ExecutionException;
 
+    InputStream id(final String user, final Map<String, String> options) throws ExecutionException;
+
     int kill(final int pid) throws ExecutionException;
 
     int chmod(final int permissions,

@@ -13,7 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-class CommandLineExecutorTest {
+class CommandLineExecutorTest { //TODO log errors
 
     private static final String TEST_PROCESS_COMMAND = "sleep";
     private static final String TEST_PROCESS_COMMAND_ARG = "30";
