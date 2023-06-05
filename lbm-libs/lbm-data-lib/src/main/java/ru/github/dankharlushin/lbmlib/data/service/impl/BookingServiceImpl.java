@@ -30,18 +30,22 @@ public class BookingServiceImpl implements BookingService {
     private final List<LocalTime> availableBookingStart;
     private final Integer bookingTimeMinutes;
     private final Integer availableDaysForBooking;
+    private final Integer deltaAvailableDaysForBooking;
 
     public BookingServiceImpl(final BookingRepository bookingRepository,
                               @Value("${libs.data.service.booking.default.booking-time}")
                               final Integer bookingTimeMinutes,
                               @Value("${libs.data.service.booking.default.available-days}")
                               final Integer availableDaysForBooking,
+                              @Value("${libs.data.service.booking.default.available-days.delta}")
+                              final Integer deltaAvailableDaysForBooking,
                               @Value("#{'${libs.data.service.booking.default.start-booking-time}'.split(',')}")
                               final List<LocalTime> availableBookingStart) {
         this.bookingRepository = bookingRepository;
         this.availableBookingStart = availableBookingStart;
         this.availableDaysForBooking = availableDaysForBooking;
         this.bookingTimeMinutes = bookingTimeMinutes;
+        this.deltaAvailableDaysForBooking = deltaAvailableDaysForBooking;
     }
 
     @Override
@@ -63,7 +67,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<LocalDate> getAvailableDates(final Integer labUnitId) {
         final List<LocalDate> availableDates = new ArrayList<>();
-        final LocalDate start = LocalDate.now().plusDays(1);
+        final LocalDate start = LocalDate.now().plusDays(deltaAvailableDaysForBooking);
         final LocalDate end = start.plusDays(availableDaysForBooking);
 
         final List<Booking> bookings = bookingRepository.getBookingsByLabIdAndDatesAndStatusNot(labUnitId,
@@ -89,10 +93,11 @@ public class BookingServiceImpl implements BookingService {
     public List<Period> getAvailableTime(final LocalDate date, final Integer labUnitId) {
         final List<Booking> bookings = bookingRepository.getBookingsByLabIdAndDateAndStatusNot(labUnitId,
                 BookingStatus.CANCELED,
-                date);
+                date.atStartOfDay());
         if (bookings.isEmpty()) {
             return availableBookingStart
                     .stream()
+                    .filter(localTime -> isTimeAvailable(date, localTime, new ArrayList<>()))
                     .map(start -> createBookingPeriod(date, start))
                     .toList();
         }
@@ -157,9 +162,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private boolean isTimeAvailable(final LocalDate date, final LocalTime time, final List<Period> datePeriods) {
-        boolean available = true;
         final LocalDateTime potentialStartDateTime = LocalDateTime.of(date, time);
+        if (LocalDateTime.now().isAfter(potentialStartDateTime)) {
+            return false;
+        }
+
         final LocalDateTime potentialEndDateTime = potentialStartDateTime.plusMinutes(bookingTimeMinutes);
+        boolean available = true;
         final Period potentialPeriod = new Period(potentialStartDateTime, potentialEndDateTime);
 
         for (final Period bookedPeriod : datePeriods) {

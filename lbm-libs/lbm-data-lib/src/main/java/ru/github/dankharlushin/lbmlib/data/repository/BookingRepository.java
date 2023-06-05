@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import ru.github.dankharlushin.lbmlib.data.entity.Booking;
 import ru.github.dankharlushin.lbmlib.data.entity.BookingStatus;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -50,7 +49,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     default List<Booking> getBookingsByLabIdAndDateAndStatusNot(final Integer labId,
                                                                 final BookingStatus status,
-                                                                final LocalDate date) {
-        return getBookingsByLabIdAndDatesAndStatusNot(labId, status, date.atStartOfDay(), date.plusDays(1).atStartOfDay());
+                                                                final LocalDateTime date) {
+        return getBookingsByLabIdAndDatesAndStatusNot(labId, status, date, date.plusDays(1));
     }
 }
