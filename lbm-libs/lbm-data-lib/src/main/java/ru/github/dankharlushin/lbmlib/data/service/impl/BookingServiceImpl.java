@@ -150,9 +150,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private boolean hasAvailableTime(final LocalDate date, final List<Period> datePeriods) {
-        if (datePeriods.isEmpty()) {
-            return true;
-        }
         for (final LocalTime potentialStartTime : availableBookingStart) {
             if (isTimeAvailable(date, potentialStartTime, datePeriods)) {
                 return true;
