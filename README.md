@@ -2,6 +2,14 @@
 
 Универсальная распределенная система бронирования и контроля доступа к дистанционным лабораторным установкам (ДЛУ).
 
+### Демонстрация работы системы
+
+https://github.com/dankharlushin/lab-booking-manager/assets/78602751/0128cb43-cfed-4999-875d-e24e18e72e0a
+
+
+https://github.com/dankharlushin/lab-booking-manager/assets/78602751/c3723ba1-20fe-41c9-95a1-507bbd15441e
+
+
 ### Общая архитектурная схема
 
 ![](architecture.png)
